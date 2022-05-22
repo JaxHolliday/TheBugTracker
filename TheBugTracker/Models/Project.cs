@@ -49,11 +49,13 @@ namespace TheBugTracker.Models
         [DisplayName("Archived")]
         public bool Archived { get; set; }
 
-        //Navigation Props
+        //Navigation Props       
+
         public virtual Company Company { get; set; }
 
         public virtual ProjectPriority ProjectPriority { get; set; }
 
+        // Tells framework i can use dot notation to access the following 
         public virtual ICollection<BTUser> Members { get; set; } = new HashSet<BTUser>();
 
         public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
