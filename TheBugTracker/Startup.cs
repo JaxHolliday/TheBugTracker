@@ -13,6 +13,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheBugTracker.Data;
 using TheBugTracker.Models;
+using TheBugTracker.Services;
+using TheBugTracker.Services.Interfaces;
 
 namespace TheBugTracker
 {
@@ -38,6 +40,11 @@ namespace TheBugTracker
                 .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
+
+            //Registering new services 
+            services.AddScoped<IBTRolesService, BTRolesService>();
+
+
 
             services.AddControllersWithViews();
         }
