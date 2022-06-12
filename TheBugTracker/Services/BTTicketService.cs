@@ -37,24 +37,122 @@ namespace TheBugTracker.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId)
+        public async Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //bring projects together and asking for the list of tickets
+                //Filtering companies 
+                List<Ticket> tickets = await _context.Projects
+                                                     .Where(p => p.CompanyId == companyId)
+                                                     .SelectMany(p => p.Tickets)
+                                                        .Include(t => t.Attachments)
+                                                        .Include(t => t.Comments)
+                                                        .Include(t => t.History)
+                                                        .Include(t => t.DeveloperUser)
+                                                        .Include(t => t.OwnerUser)
+                                                        .Include(t => t.TicketPriority)
+                                                        .Include(t => t.TicketStatus)
+                                                        .Include(t => t.TicketType)
+                                                        .Include(t => t.Project)
+                                                    .ToListAsync();
+
+                return tickets;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<List<Ticket>> GetAllTicketsByPriorityAsync(int companyId, string priorityName)
+        public async Task<List<Ticket>> GetAllTicketsByPriorityAsync(int companyId, string priorityName)
         {
-            throw new NotImplementedException();
+            //.Value helps get result of this thread 
+            int priorityId = (await LookupTicketPriorityIdAsync(priorityName)).Value;
+
+            try
+            {
+                List<Ticket> tickets = await _context.Projects
+                                                        .Where(p => p.CompanyId == companyId)
+                                                          .SelectMany(p => p.Tickets)
+                                                            .Include(t => t.Attachments)
+                                                            .Include(t => t.Comments)
+                                                            .Include(t => t.History)
+                                                            .Include(t => t.DeveloperUser)
+                                                            .Include(t => t.OwnerUser)
+                                                            .Include(t => t.TicketPriority)
+                                                            .Include(t => t.TicketStatus)
+                                                            .Include(t => t.TicketType)
+                                                            .Include(t => t.Project)
+                                                                .Where(t => t.TicketPriorityId == priorityId)
+                                                                .ToListAsync();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<List<Ticket>> GetAllTicketsByStatusAsync(int companyId, string statusName)
+        public async Task<List<Ticket>> GetAllTicketsByStatusAsync(int companyId, string statusName)
         {
-            throw new NotImplementedException();
+            //.Value helps get result of this thread 
+            int statusId = (await LookupTicketStatusIdAsync(statusName)).Value;
+
+            try
+            {
+                List<Ticket> tickets = await _context.Projects
+                                                        .Where(p => p.CompanyId == companyId)
+                                                          .SelectMany(p => p.Tickets)
+                                                            .Include(t => t.Attachments)
+                                                            .Include(t => t.Comments)
+                                                            .Include(t => t.History)
+                                                            .Include(t => t.DeveloperUser)
+                                                            .Include(t => t.OwnerUser)
+                                                            .Include(t => t.TicketPriority)
+                                                            .Include(t => t.TicketStatus)
+                                                            .Include(t => t.TicketType)
+                                                            .Include(t => t.Project)
+                                                                .Where(t => t.TicketStatusId == statusId)
+                                                                .ToListAsync();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
-        public Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName)
+        public async Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName)
         {
-            throw new NotImplementedException();
+            //.Value helps get result of this thread 
+            int typeId = (await LookupTicketTypeIdAsync(typeName)).Value;
+
+            try
+            {
+                List<Ticket> tickets = await _context.Projects
+                                                        .Where(p => p.CompanyId == companyId)
+                                                          .SelectMany(p => p.Tickets)
+                                                            .Include(t => t.Attachments)
+                                                            .Include(t => t.Comments)
+                                                            .Include(t => t.History)
+                                                            .Include(t => t.DeveloperUser)
+                                                            .Include(t => t.OwnerUser)
+                                                            .Include(t => t.TicketPriority)
+                                                            .Include(t => t.TicketStatus)
+                                                            .Include(t => t.TicketType)
+                                                            .Include(t => t.Project)
+                                                                .Where(t => t.TicketTypeId == typeId)
+                                                                .ToListAsync();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
 
         public Task<List<Ticket>> GetArchivedTicketsAsync(int companyId)
@@ -112,7 +210,7 @@ namespace TheBugTracker.Services
                 TicketPriority priority = await _context.TicketPriorities.FirstOrDefaultAsync(p => p.Name == priorityName);
                 return priority?.Id;
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
@@ -127,7 +225,7 @@ namespace TheBugTracker.Services
                 TicketStatus status = await _context.TicketStatuses.FirstOrDefaultAsync(p => p.Name == statusName);
                 return status?.Id;
             }
-            catch
+            catch (Exception)
             {
                 // if any trouble we are throwing exception to STACK
                 throw;
@@ -142,7 +240,7 @@ namespace TheBugTracker.Services
                 TicketType type = await _context.TicketTypes.FirstOrDefaultAsync(p => p.Name == typeName);
                 return type?.Id;
             }
-            catch
+            catch (Exception)
             {
                 throw;
             }
