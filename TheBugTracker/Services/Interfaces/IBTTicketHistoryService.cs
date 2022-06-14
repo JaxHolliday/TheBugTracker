@@ -12,6 +12,6 @@ namespace TheBugTracker.Services.Interfaces
 
         Task<List<TicketHistory>> GetProjectTicketHistoriesAsync(int projectId, int companyId);
 
-        Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int projectId);
+        Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId);
     }
 }

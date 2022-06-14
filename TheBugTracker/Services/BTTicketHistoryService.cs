@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -158,14 +159,49 @@ namespace TheBugTracker.Services
 
         }
 
-        public Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int projectId)
+        public async Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Project> projects = (await _context.Companies
+                                                        .Include(c => c.Projects)
+                                                            .ThenInclude(p => p.Tickets)
+                                                            .ThenInclude(t => t.History)
+                                                            .ThenInclude(h => h.User)
+                                                        .FirstOrDefaultAsync(c => c.Id == companyId)).Projects.ToList();
+
+                List<Ticket> tickets = projects.SelectMany(p => p.Tickets).ToList();
+
+                List<TicketHistory> ticketHistories = tickets.SelectMany(t => t.History).ToList();
+
+                return ticketHistories;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
-        public Task<List<TicketHistory>> GetProjectTicketHistoriesAsync(int projectId, int companyId)
+        public async Task<List<TicketHistory>> GetProjectTicketHistoriesAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Project project = await _context.Projects.Where(p => p.CompanyId == companyId)
+                                                         .Include(p => p.Tickets)
+                                                            .ThenInclude(t => t.History)
+                                                                .ThenInclude(h => h.User)
+                                                          .FirstOrDefaultAsync(p => p.Id == projectId);
+
+                List<TicketHistory> ticketHistory = project.Tickets.SelectMany(t => t.History).ToList();
+
+                return ticketHistory;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
