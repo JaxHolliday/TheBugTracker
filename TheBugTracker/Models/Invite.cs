@@ -24,25 +24,25 @@ namespace TheBugTracker.Models
 
         //reps primary key in another table 
         [DisplayName("Company")]
-        public int CompanyID { get; set; }
+        public int CompanyId { get; set; }
 
         [DisplayName("Project")]
-        public int ProjectID { get; set; }
+        public int ProjectId { get; set; }
 
         [DisplayName("Invitor")]
         public string InvitorId { get; set; }
 
         [DisplayName("Invitee")]
-        public string InviteeID { get; set; }
+        public string InviteeId { get; set; }
 
         [DisplayName("Invitee Email")]
-        public int InviteeEmail { get; set; }
+        public string InviteeEmail { get; set; }
 
         [DisplayName("Invitee First Name")]
-        public int InviteeFirstName { get; set; }
+        public string InviteeFirstName { get; set; }
 
         [DisplayName("Invitee Last Name")]
-        public int InviteeLastName { get; set; }
+        public string InviteeLastName { get; set; }
 
         public bool IsValid { get; set; }
 

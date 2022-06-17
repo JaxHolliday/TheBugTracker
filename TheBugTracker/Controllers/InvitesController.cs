@@ -51,10 +51,10 @@ namespace TheBugTracker.Controllers
         // GET: Invites/Create
         public IActionResult Create()
         {
-            ViewData["CompanyID"] = new SelectList(_context.Companies, "Id", "Id");
-            ViewData["InviteeID"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
+            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ProjectID"] = new SelectList(_context.Projects, "Id", "Name");
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
             return View();
         }
 
@@ -63,7 +63,7 @@ namespace TheBugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InviteDate,JoinDate,CompanyToken,CompanyID,ProjectID,InvitorId,InviteeID,InviteeEmail,InviteeFirstName,InviteeLastName,IsValid")] Invite invite)
+        public async Task<IActionResult> Create([Bind("Id,InviteDate,JoinDate,CompanyToken,CompanyId,ProjectId,InvitorId,InviteeId,InviteeEmail,InviteeFirstName,InviteeLastName,IsValid")] Invite invite)
         {
             if (ModelState.IsValid)
             {
@@ -71,10 +71,10 @@ namespace TheBugTracker.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyID"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyID);
-            ViewData["InviteeID"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeID);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyId);
+            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeId);
             ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id", invite.InvitorId);
-            ViewData["ProjectID"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectID);
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
             return View(invite);
         }
 
@@ -91,10 +91,10 @@ namespace TheBugTracker.Controllers
             {
                 return NotFound();
             }
-            ViewData["CompanyID"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyID);
-            ViewData["InviteeID"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeID);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyId);
+            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeId);
             ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id", invite.InvitorId);
-            ViewData["ProjectID"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectID);
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
             return View(invite);
         }
 
@@ -103,7 +103,7 @@ namespace TheBugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,InviteDate,JoinDate,CompanyToken,CompanyID,ProjectID,InvitorId,InviteeID,InviteeEmail,InviteeFirstName,InviteeLastName,IsValid")] Invite invite)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,InviteDate,JoinDate,CompanyToken,CompanyId,ProjectId,InvitorId,InviteeId,InviteeEmail,InviteeFirstName,InviteeLastName,IsValid")] Invite invite)
         {
             if (id != invite.Id)
             {
@@ -130,10 +130,10 @@ namespace TheBugTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyID"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyID);
-            ViewData["InviteeID"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeID);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyId);
+            ViewData["InviteeId"] = new SelectList(_context.Users, "Id", "Id", invite.InviteeId);
             ViewData["InvitorId"] = new SelectList(_context.Users, "Id", "Id", invite.InvitorId);
-            ViewData["ProjectID"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectID);
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
             return View(invite);
         }
 
