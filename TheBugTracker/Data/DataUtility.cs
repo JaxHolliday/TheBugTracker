@@ -92,6 +92,7 @@ namespace TheBugTracker.Data
         {
             try
             {
+                //Creating List of seeded companies into the DB 
                 IList<Company> defaultcompanies = new List<Company>() {
                     new Company() { Name = "Company1", Description="This is default Company 1" },
                     new Company() { Name = "Company2", Description="This is default Company 2" },
@@ -139,6 +140,7 @@ namespace TheBugTracker.Data
             }
             catch (Exception ex)
             {
+                //Customs exceptions 
                 Console.WriteLine("*************  ERROR  *************");
                 Console.WriteLine("Error Seeding Project Priorities.");
                 Console.WriteLine(ex.Message);
