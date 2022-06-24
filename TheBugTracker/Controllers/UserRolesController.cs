@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,9 @@ using TheBugTracker.Services.Interfaces;
 
 namespace TheBugTracker.Controllers
 {
+    [Authorize]
     public class UserRolesController : Controller
-    {
+    {        
         private readonly IBTRolesService _rolesService;
         private readonly IBTCompanyInfoService _companyInfoService;
 
@@ -53,5 +55,36 @@ namespace TheBugTracker.Controllers
             // return VM
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member)
+        {
+            //Get companyId
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //Instantiate the BTUser
+            BTUser btUser = (await _companyInfoService.GetAllMembersAsync(companyId)).FirstOrDefault(u => u.Id == member.BTUser.Id);
+
+            //Get roles for the user
+            IEnumerable<string> roles = await _rolesService.GetUserRolesAsync(btUser);
+
+
+            //Grab the selected role
+            string userRole = member.SelectedRoles.FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                if (await _rolesService.RemoveUserFromRolesAsync(btUser, roles))
+                {
+                    await _rolesService.AddUserToRoleAsync(btUser, userRole);
+                }
+            }
+            //Nav back to the view
+            return RedirectToAction(nameof(ManageUserRoles));
+        }
+
+
+
     }
 }
