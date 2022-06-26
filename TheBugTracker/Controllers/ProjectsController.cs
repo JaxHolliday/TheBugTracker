@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheBugTracker.Data;
 using TheBugTracker.Models;
+using TheBugTracker.Services.Interfaces;
 
 namespace TheBugTracker.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTRolesService _rolesService;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context, 
+                                  IBTRolesService rolesService)
         {
             _context = context;
+            _rolesService = rolesService;
         }
 
         // GET: Projects
