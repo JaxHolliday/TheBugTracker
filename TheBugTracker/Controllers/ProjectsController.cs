@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TheBugTracker.Data;
+using TheBugTracker.Extensions;
 using TheBugTracker.Models;
+using TheBugTracker.Models.Enums;
+using TheBugTracker.Models.ViewModels;
 using TheBugTracker.Services.Interfaces;
 
 namespace TheBugTracker.Controllers
@@ -15,12 +18,15 @@ namespace TheBugTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IBTRolesService _rolesService;
+        private readonly IBTLookupService _lookupService;
 
         public ProjectsController(ApplicationDbContext context, 
-                                  IBTRolesService rolesService)
+                                  IBTRolesService rolesService,
+                                  IBTLookupService lookupService)
         {
             _context = context;
             _rolesService = rolesService;
+            _lookupService = lookupService;
         }
 
         // GET: Projects
@@ -51,11 +57,19 @@ namespace TheBugTracker.Controllers
         }
 
         // GET: Projects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id");
-            return View();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //Add VM instance
+            AddProjectWithPMViewModel model = new();
+
+            //Load SelectLists with the data ie. PMList and PriorityList
+            //"Id" selecting | "Name" showing
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
+            model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+
+            return View(model);
         }
 
         // POST: Projects/Create
