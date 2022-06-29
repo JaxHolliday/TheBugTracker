@@ -100,9 +100,16 @@ namespace TheBugTracker.Services
         //CRUD - Archive
         public async Task ArchiveProjectAsync(Project project)
         {
-            project.Archived = true;
-            _context.Update(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                project.Archived = true;
+                _context.Update(project);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<BTUser>> GetAllProjectMembersExceptPMAsync(int projectId)
