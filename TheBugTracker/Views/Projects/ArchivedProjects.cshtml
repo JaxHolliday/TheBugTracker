@@ -8,11 +8,18 @@
 
 @* line 12 gets user info: name and etc *@
 @{
-    ViewData["Title"] = "Archived Projects";
+    ViewData["Title"] = "All Projects";
     BTUser bTUser = await UserManager.GetUserAsync(User);
 }
 
-<h1>Archived Projects</h1>
+<h1>All Projects</h1>
+
+@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 
 <table class="table">
     <thead>
@@ -93,8 +100,18 @@
                     @if (User.IsInRole(nameof(Roles.Admin)) || isProjectPM)
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>                       
+
+                        @if (item.Archived)
+                        {
+                            <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                        }
+                        else
+                        {
+                            <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+                        }
+
                     }
+
                 </td>
             </tr>
         }
