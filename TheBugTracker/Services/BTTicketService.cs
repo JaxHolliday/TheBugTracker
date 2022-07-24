@@ -355,6 +355,7 @@ namespace TheBugTracker.Services
         {
             BTUser btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             List<Ticket> tickets = new();
+
             try
             {
                 if (await _rolesService.IsUserInRoleAsync(btUser, Roles.Admin.ToString()))
