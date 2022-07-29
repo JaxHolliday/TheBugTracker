@@ -287,6 +287,9 @@ namespace TheBugTracker.Services
                                      .Include(t => t.TicketPriority)
                                      .Include(t => t.TicketStatus)
                                      .Include(t => t.TicketType)
+                                     .Include(t => t.Comments)
+                                     .Include(t => t.Attachments)
+                                     .Include(t => t.History)
                                      .FirstOrDefaultAsync(t => t.Id == ticketId);
             }
             catch (Exception)

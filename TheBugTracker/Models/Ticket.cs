@@ -28,7 +28,7 @@ namespace TheBugTracker.Models
         [DataType(DataType.Date)]
         [DisplayName("Updated")]
         public DateTimeOffset? Updated { get; set; }
-        
+
         [DisplayName("Archived")]
         public bool Archived { get; set; }
 
