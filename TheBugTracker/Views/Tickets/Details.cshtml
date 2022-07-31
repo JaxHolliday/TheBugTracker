@@ -79,12 +79,53 @@
                             <div class="card-body" style="overflow-y:auto;height:600px;">
 
                                 @*Form and Logic for authorized users to add comments*@
+                                <form class="form-horizontal form-bordered" asp-action="AddTicketComment" asp-controller="Tickets" method="post">
+                                    <input type="hidden" asp-for="Id" name="TicketId"/>
+                                    @if (Model.DeveloperUserId == btUser.Id || Model.OwnerUserId == btUser.Id || projectManager?.Id == btUser.Id || User.IsInRole(nameof(Roles.Admin)))
+                                            {
+                                        //Aspfor looks directly at model 
+                                        <div class="form-group">
+                                            <textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add Comment..."></textarea>
+                                        </div>
+                                        <button class="btn btn-sm btn-primary">Submit</button>
+                                    }
+                                    else
+                                    {
+                                        <div class="form-group">
+                                            <textarea disabled asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add Comment..."></textarea>
+                                        </div>
+                                    }
+                                </form>
 
                                 <hr />
 
                                 <h6>Comments</h6>
                                 <ul class="right_chat list-unstyled mb-0">
                                     @*Loop to show comments made for the Ticket*@
+                                    @foreach (TicketComment comment in Model.Comments)
+                                    {
+                                        <li class="online mb-4">
+                                            <div class="media">
+                                                <a href="javascript:void(0);">
+                                                    @if (btUser?.AvatarFileData != null)
+                                                    {
+                                                        <img class="media-object" src="data:image/*;base64,@(Convert.ToBase64String(btUser.AvatarFileData))" alt="" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img class="media-object" src="~/image/avatardefault_92824.png" alt="" style="width:30px;height:30px"/>
+                                                    }
+                                                </a>
+                                                <div class="media-body">
+                                                    <span class="text-muted" style="font-size:x-small;">
+                                                        @@ @comment.User.FullName
+                                                        <small class="float-right">@comment.Created.ToString("MM.dd.yyyy h:ss tt")</small>:
+                                                    </span>
+                                                </div>
+                                                <span class="message text-primary">@Html.Raw(comment.Comment)</span>
+                                            </div>
+                                        </li>
+                                    }
                                 </ul>
                             </div>
                             <div class="card-footer">

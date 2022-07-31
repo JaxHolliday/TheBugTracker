@@ -129,7 +129,7 @@ namespace TheBugTracker.Controllers
             BTUser btUser = await _userManager.GetUserAsync(User);
 
             if (ModelState.IsValid)
-            {            
+            {
                 ticket.Created = DateTimeOffset.Now;
                 ticket.OwnerUserId = btUser.Id;
                 //using the name of for ENUM call
@@ -219,6 +219,30 @@ namespace TheBugTracker.Controllers
             ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
             return View(ticket);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketComment([Bind("Id,TicketId,Comment")] TicketComment ticketComment)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.Created = DateTimeOffset.Now;
+
+                    await _ticketService.AddTicketCommentAsync(ticketComment);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            //action first, list of parameters, setting ob obj
+            return RedirectToAction("Details", new { id = ticketComment.TicketId });
         }
 
         // GET: Tickets/Archive/5
