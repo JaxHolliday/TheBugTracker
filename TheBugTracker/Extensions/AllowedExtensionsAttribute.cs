@@ -15,7 +15,8 @@ namespace TheBugTracker.Extensions
         {
             _extensions = extensions;
         }
-
+        //takes extension length as a string and check for it 
+        //ValidationAttribute class is MS based
 
         protected override ValidationResult IsValid(
         object value, ValidationContext validationContext)

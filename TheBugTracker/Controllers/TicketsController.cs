@@ -253,6 +253,7 @@ namespace TheBugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
         {
+            //variable that can but used later 
             string statusMessage;
 
             if (ModelState.IsValid && ticketAttachment.FormFile != null)
@@ -273,11 +274,13 @@ namespace TheBugTracker.Controllers
 
             }
 
+            //ask for id of the ticket we are working on and going back to the details of it 
             return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
         }
 
         public async Task<IActionResult> ShowFile(int id)
         {
+            //calls method to view or download our files 
             TicketAttachment ticketAttachment = await _ticketService.GetTicketAttachmentByIdAsync(id);
             string fileName = ticketAttachment.FileName;
             byte[] fileData = ticketAttachment.FileData;

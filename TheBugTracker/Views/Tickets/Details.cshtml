@@ -140,12 +140,13 @@
                                 <h2>Attachments</h2>
                             </div>
                             <div class="card-body" style="overflow-y:auto;height:300px;">
-                                @* Refer to the Ticket Attachments document for this section *@
                                 <div class="row clearfix">
                                     <div>
+                                        @*must have enctype="multipart/form-data" to take file*@
                                         <form asp-action="AddTicketAttachment" asp-controller="Tickets" enctype="multipart/form-data" method="post">
                                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                                             <input type="hidden" asp-for="@Model.Id" name="TicketId">
+
                                             <div class="media-body ml-3">
                                                 <label>
                                                     Description
@@ -162,6 +163,7 @@
                                 @* Ticket attachments part 2 here *@
                                 <div class="container">
                                     <div class="row">
+                                        @* loop over any attachements for this ticket and show them in "nice way" *@
                                         @foreach (TicketAttachment item in Model.Attachments)
                                         {
                                             <div class="col col-sm-2">
