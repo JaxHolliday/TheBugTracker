@@ -433,6 +433,22 @@ namespace TheBugTracker.Services
             }
         }
 
+        public async Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId)
+        {
+            List<Ticket> tickets = new();
+            try
+            {
+                //looking for ticket that has a null or empty string for the DevUserId. uses Where clause 
+                tickets = (await GetAllTicketsByCompanyAsync(companyId)).Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).ToList();
+                return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
         //Helper methods - Lookups
         //Make sure variables and calls are correct when you reuse code ion another sections
         public async Task<int?> LookupTicketPriorityIdAsync(string priorityName)
