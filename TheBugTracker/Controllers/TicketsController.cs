@@ -12,6 +12,7 @@ using TheBugTracker.Data;
 using TheBugTracker.Extensions;
 using TheBugTracker.Models;
 using TheBugTracker.Models.Enums;
+using TheBugTracker.Models.ViewModels;
 using TheBugTracker.Services.Interfaces;
 
 namespace TheBugTracker.Controllers
@@ -114,6 +115,17 @@ namespace TheBugTracker.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AssignDeveloper(int id)
+        {
+            AssignDeveloperViewModel model = new();
+
+            model.Ticket = await _ticketService.GetTicketByIdAsync(id);
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.Id, nameof(Roles.Developer)),
+                                              "Id", "FullName");
+
+            return View(model);
+        }
 
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
