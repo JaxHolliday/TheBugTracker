@@ -121,10 +121,24 @@ namespace TheBugTracker.Controllers
             AssignDeveloperViewModel model = new();
 
             model.Ticket = await _ticketService.GetTicketByIdAsync(id);
-            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.Id, nameof(Roles.Developer)),
+            //TODO - look at later
+            //need to get the project id for the ticket in use for that specific project
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Developer)),
                                               "Id", "FullName");
-
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
+        {
+            if (model.DeveloperId != null)
+            {
+                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+            }
+
+            //see same ticket again 
+            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket.Id });
         }
 
         // GET: Tickets/Details/5

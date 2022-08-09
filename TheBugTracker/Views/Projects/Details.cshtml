@@ -107,7 +107,7 @@
                                         @*TODO: LOOK AT LATER *@
                                         @if (User.IsInRole(nameof(Roles.Admin)))
                                         {
-                                            <span><a asp-action="AssignProjectManager" asp-controller="Home" asp-route="@Model.Id" class="btn btn-xs btn-outline-info">Assign PM</a></span>
+                                            @*<span><a asp-action="AssignProjectManager" asp-controller="Home" asp-route="@Model.Id" class="btn btn-xs btn-outline-info">Assign PM</a></span>*@
                                         }
                                     </div>
                                 </div>
@@ -214,7 +214,7 @@
                                                     {
                                                         if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                                                         {
-                                                            <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Home" asp-route-ticketId="@ticket.Id">Assign Dev</a>
+                                                            <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-ticketId="@ticket.Id">Assign Dev</a>
                                                         }
 
                                                     }
@@ -239,7 +239,7 @@
 
                                                     @if (User.IsInRole("Admin") || (projectManager?.Id == btUser.Id))
                                                     {
-                                                        <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
+                                                        <a class="btn btn-sm btn-outline-danger" asp-action="Archive" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-archive"></i></a>
                                                     }
                                                 </td>
                                             </tr>

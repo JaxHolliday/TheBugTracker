@@ -16,6 +16,24 @@
 }
 
 <h1>Ticket Details</h1>
+@* checking if developer user id exists on this ticket | checks model referenced above if not null*@
+@if (!string.IsNullOrEmpty(Model.DeveloperUserId))
+{
+    <a href="javascript:void(0);">
+        @* checking if dev user is not null *@
+        @if (Model.DeveloperUser?.AvatarFileData != null)
+        {
+            <img class="media-object" src="data:image/*;base64,@(Convert.ToBase64String(btUser.AvatarFileData))" alt="" />
+        }
+        else
+        {
+            <img class="media-object" src="~/img/avatardefault_92824.png" alt="" style="width:30px;height:30px" />
+        }
+    </a>
+    <span class="text-muted" style="font-size:x-small;">        
+       Developer: <strong>@Model.DeveloperUser.FullName</strong> 
+    </span>
+}
 
 <div>
     <div classxfont-weighteighteightgetainer-fluid">
@@ -80,10 +98,10 @@
 
                                 @*Form and Logic for authorized users to add comments*@
                                 <form class="form-horizontal form-bordered" asp-action="AddTicketComment" asp-controller="Tickets" method="post">
-                                    <input type="hidden" asp-for="Id" name="TicketId"/>
+                                    <input type="hidden" asp-for="Id" name="TicketId" />
                                     @if (Model.DeveloperUserId == btUser.Id || Model.OwnerUserId == btUser.Id || projectManager?.Id == btUser.Id || User.IsInRole(nameof(Roles.Admin)))
-                                            {
-                                        //Aspfor looks directly at model 
+                                    {
+                                        //Aspfor looks directly at model
                                         <div class="form-group">
                                             <textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add Comment..."></textarea>
                                         </div>
@@ -113,7 +131,7 @@
                                                     }
                                                     else
                                                     {
-                                                        <img class="media-object" src="~/img/avatardefault_92824.png" alt="" style="width:30px;height:30px"/>
+                                                        <img class="media-object" src="~/img/avatardefault_92824.png" alt="" style="width:30px;height:30px" />
                                                     }
                                                 </a>
                                                 <div class="media-body">
