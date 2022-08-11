@@ -27,13 +27,14 @@ namespace TheBugTracker.Controllers
         private readonly IBTCompanyInfoService _companyInfoService;
 
         #endregion
-        public ProjectsController(ApplicationDbContext context, 
-                                  IBTRolesService rolesService,
-                                  IBTLookupService lookupService,
-                                  IBTFileService fileService,
-                                  IBTProjectService projectService,
-                                  UserManager<BTUser> userManager,
-                                  IBTCompanyInfoService companyInfoService)
+        #region Injection
+        public ProjectsController(ApplicationDbContext context,
+                          IBTRolesService rolesService,
+                          IBTLookupService lookupService,
+                          IBTFileService fileService,
+                          IBTProjectService projectService,
+                          UserManager<BTUser> userManager,
+                          IBTCompanyInfoService companyInfoService)
         {
             _context = context;
             _rolesService = rolesService;
@@ -43,6 +44,7 @@ namespace TheBugTracker.Controllers
             _userManager = userManager;
             _companyInfoService = companyInfoService;
         }
+        #endregion
 
         // GET: Projects
         public async Task<IActionResult> Index()
@@ -90,7 +92,16 @@ namespace TheBugTracker.Controllers
             return View(projects);
         }
 
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
 
+            List<Project> projects = new();
+
+            projects = await _projectService.GetUnassignedProjectsAsync(companyId);
+
+            return View(projects);
+        }
 
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
