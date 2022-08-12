@@ -103,6 +103,21 @@ namespace TheBugTracker.Controllers
             return View(projects);
         }
 
+        public async Task<IActionResult> AssignPM(int projectId)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //instance of assign pm VM
+            AssignPMViewModel model = new();
+
+            //populate model with data
+            //get project based on id put in
+            model.Project = await _projectService.GetProjectByIdAsync(projectId, companyId);
+            //list of members that has role of pm, then item we want selected 
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), companyId), "Id", "FullName");
+            return View(model);
+        }
+
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -243,7 +258,7 @@ namespace TheBugTracker.Controllers
             return RedirectToAction("Edit");
         }
 
-        // GET: Projects/Delete/5
+        // GET: Projects/Archive/5
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
@@ -263,7 +278,7 @@ namespace TheBugTracker.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Projects/Archive/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -295,7 +310,7 @@ namespace TheBugTracker.Controllers
             return View(project);
         }
 
-        // POST: Projects/Delete/5
+        // POST: Projects/Restore/5
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)

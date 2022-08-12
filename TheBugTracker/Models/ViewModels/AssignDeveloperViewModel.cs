@@ -8,6 +8,7 @@ namespace TheBugTracker.Models.ViewModels
 {
     public class AssignDeveloperViewModel
     {
+        // know the item we are working with 
         public Ticket Ticket { get; set; }
 
         public SelectList Developers { get; set; }

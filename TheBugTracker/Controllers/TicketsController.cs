@@ -118,6 +118,7 @@ namespace TheBugTracker.Controllers
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int id)
         {
+            //expl;icit instance 
             AssignDeveloperViewModel model = new();
 
             model.Ticket = await _ticketService.GetTicketByIdAsync(id);
