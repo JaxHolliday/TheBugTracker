@@ -8,11 +8,11 @@
 
 @* line 12 gets user info: name and etc *@
 @{
-    ViewData["Title"] = "All Projects";
+    ViewData["Title"] = "Archived Projects";
     BTUser bTUser = await UserManager.GetUserAsync(User);
 }
 
-<h1>All Projects</h1>
+<h1>Archived Projects</h1>
 
 @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
 {

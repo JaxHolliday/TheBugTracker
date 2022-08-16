@@ -118,6 +118,23 @@ namespace TheBugTracker.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel model)
+        {
+            //if not empty then we'll handle in the IF STATEMENT
+            if (!string.IsNullOrEmpty(model.PMID))
+            {
+                //project service method, w/ selected pm and project
+                await _projectService.AddProjectManagerAsync(model.PMID, model.Project.Id);
+
+                //going to details / obj carrying values
+                return RedirectToAction(nameof(Details), new { id = model.Project.Id });
+            }
+            //sending back to view if error 
+            return RedirectToAction(nameof(AssignPM), new { project = model.Project.Id});
+        }
+
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {

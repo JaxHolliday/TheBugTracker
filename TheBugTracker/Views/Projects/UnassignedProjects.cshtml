@@ -64,8 +64,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
             </td>
-            <td>                
-                <a class="btn btn-sm btn-outline-secondary" asp-action="AssignPM" asp-route-id="@item.Id">Add PM</a> 
+            <td>    
+                @* asp-route-id = dynamic tag helper, naming attribute captures projectId and passes it to HTTPGet *@
+                <a class="btn btn-sm btn-outline-secondary" asp-action="AssignPM" asp-route-projectId="@item.Id">Add PM</a> 
             </td>
         </tr>
 }
