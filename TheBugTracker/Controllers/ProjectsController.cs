@@ -135,6 +135,33 @@ namespace TheBugTracker.Controllers
             return RedirectToAction(nameof(AssignPM), new { project = model.Project.Id});
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AssignMembers(int id)
+        {
+            ProjectMembersViewModel model = new();
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //instance of VM
+            model.Project = await _projectService.GetProjectByIdAsync(id, companyId);
+
+            //getting dev list for company | First is Dev then Submitters 
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId);
+            List<BTUser> submitters = await _rolesService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId);
+
+            //Joining the list | to concat list must be same type 
+            List<BTUser> companyMembers = developers.Concat(submitters).ToList();
+
+            //contains current project members | selecting only member id's into a list
+            //setting up to build that we need to send to view 
+            List<string> projectMembers = model.Project.Members.Select(m => m.Id).ToList();
+
+            //showing us those who are already selected | tool front uses to designated users 
+            model.Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers);
+
+            return View(model);
+        }
+
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
