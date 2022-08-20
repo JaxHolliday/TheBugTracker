@@ -159,6 +159,7 @@ namespace TheBugTracker.Controllers
             //showing us those who are already selected | tool front uses to designated users 
             model.Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers);
 
+            //model contains data for view 
             return View(model);
         }
 
