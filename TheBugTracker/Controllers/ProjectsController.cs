@@ -103,6 +103,7 @@ namespace TheBugTracker.Controllers
             return View(projects);
         }
 
+        [HttpGet]
         public async Task<IActionResult> AssignPM(int projectId)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -161,6 +162,38 @@ namespace TheBugTracker.Controllers
 
             //model contains data for view 
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
+        {
+            if (model.SelectedUsers != null)
+            {
+                //looking for clean list w/o dupes and making sure to not remove PM
+                //only need ids
+                List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id))
+                                                               .Select(m => m.Id).ToList();
+
+                //remove current members 
+                foreach (string member in memberIds)
+                {
+                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
+                }
+
+
+                //add selected members 
+                foreach (string member in model.SelectedUsers)
+                {
+                    await _projectService.AddUserToProjectAsync(member, model.Project.Id);
+                }
+
+                //return to project details / be specific to action parameter 
+                return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
+            }
+
+            //going back to GET w/ route value if fail
+            return RedirectToAction(nameof(AssignMembers), new { id = model.Project.Id });
         }
 
         // GET: Projects/Details/5
