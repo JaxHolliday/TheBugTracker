@@ -159,6 +159,43 @@ namespace TheBugTracker.Services
 
         }
 
+        #region History or comment
+        //for tickey history or comment 
+        public async Task AddHistoryAsync(int ticketId, string model, string userId)
+        {
+            try
+            {
+                //explicit call to capture ticket
+                Ticket ticket = await _context.Tickets.FindAsync(ticketId);
+                //removing ticket and replace w/ nothing
+                string description = model.ToLower().Replace("Ticket", "");
+                description = $"New {description} added to ticket: {ticket.Title}";
+
+                //ticket history cant exist w/o history | old/new val are blank 
+                TicketHistory history = new()
+                {
+                    TicketId = ticket.Id,
+                    Property = model,
+                    OldValue = "",
+                    NewValue = "",
+                    Created = DateTimeOffset.Now,
+                    UserId = userId,
+                    Description = description
+                };
+
+                await _context.TicketHistories.AddAsync(history);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        #endregion
+
         public async Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId)
         {
             try

@@ -304,6 +304,29 @@ namespace TheBugTracker.Services
 
         }
 
+        public async Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId)
+        {
+            try
+            {
+                // AsNoTracking keeps entity framework from tracking entity | we dont need to change ticket just comparing states 
+
+                return await _context.Tickets
+                                     .Include(t => t.DeveloperUser)
+                                     .Include(t => t.Project)
+                                     .Include(t => t.TicketPriority)
+                                     .Include(t => t.TicketStatus)
+                                     .Include(t => t.TicketType)
+                                     .AsNoTracking()
+                                     .FirstOrDefaultAsync(t => t.Id == ticketId);  // how we filter based on ticket id
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
         {
             try
