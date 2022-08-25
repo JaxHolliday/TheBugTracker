@@ -26,6 +26,7 @@ namespace TheBugTracker.Controllers
         private readonly IBTLookupService _lookupService;
         private readonly IBTTicketService _ticketService;
         private readonly IBTFileService _fileService;
+        private readonly IBTTicketHistoryService _historyService;
 
         //Constructor
         public TicketsController(ApplicationDbContext context,
@@ -33,7 +34,8 @@ namespace TheBugTracker.Controllers
                                  IBTProjectService projectService,
                                  IBTLookupService lookupService,
                                  IBTTicketService ticketService,
-                                 IBTFileService fileService)
+                                 IBTFileService fileService,
+                                 IBTTicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
@@ -41,6 +43,7 @@ namespace TheBugTracker.Controllers
             _lookupService = lookupService;
             _ticketService = ticketService;
             _fileService = fileService;
+            _historyService = historyService;
         }
 
         // GET: Tickets
@@ -254,7 +257,9 @@ namespace TheBugTracker.Controllers
 
             if (ModelState.IsValid)
             {
-                BTUser user = await _userManager.GetUserAsync(User);
+                BTUser btUser = await _userManager.GetUserAsync(User);
+                //capture no tracking of a ticket | looking in db and storing it as old ticket and wont change no matter what (like taking a picture)
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
 
                 try
                 {
@@ -273,6 +278,10 @@ namespace TheBugTracker.Controllers
                         throw;
                     }
                 }
+                //snapshot of the modification | then saving changes 
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+
                 return RedirectToAction(nameof(Index));
             }
 
