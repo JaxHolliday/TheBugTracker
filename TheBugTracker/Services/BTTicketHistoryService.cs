@@ -168,7 +168,7 @@ namespace TheBugTracker.Services
                 //explicit call to capture ticket
                 Ticket ticket = await _context.Tickets.FindAsync(ticketId);
                 //removing ticket and replace w/ nothing
-                string description = model.ToLower().Replace("Ticket", "");
+                string description = model.ToLower().Replace("ticket", "");
                 description = $"New {description} added to ticket: {ticket.Title}";
 
                 //ticket history cant exist w/o history | old/new val are blank 
