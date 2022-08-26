@@ -138,7 +138,27 @@ namespace TheBugTracker.Controllers
         {
             if (model.DeveloperId != null)
             {
-                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                // getting user
+                BTUser btUser = await _userManager.GetUserAsync(User);
+                //Old Ticket
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+
+                try
+                {
+                    await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                //New Ticket | capturing history upon the assigning of new developer
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+
+                return RedirectToAction(nameof(Details), new { id = model.Ticket.Id });
             }
 
             //see same ticket again 
@@ -196,14 +216,31 @@ namespace TheBugTracker.Controllers
 
             if (ModelState.IsValid)
             {
-                ticket.Created = DateTimeOffset.Now;
-                ticket.OwnerUserId = btUser.Id;
-                //using the name of for ENUM call
-                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
-                //ticket service method to save to DB
-                await _ticketService.AddNewTicketAsync(ticket);
+                try
+                {
+                    ticket.Created = DateTimeOffset.Now;
+                    ticket.OwnerUserId = btUser.Id;
+                    //using the name of for ENUM call
+                    ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(BTTicketStatus.New))).Value;
+                    //ticket service method to save to DB
+                    await _ticketService.AddNewTicketAsync(ticket);
 
+                    //Ticket History
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    //null since there is new old ticket currently 
+                    await _historyService.AddHistoryAsync(null, newTicket, btUser.Id);
+
+                    //Ticket Notification
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }                
+                
                 return RedirectToAction(nameof(Index));
+
             }
 
             if (User.IsInRole(nameof(Roles.Admin)))
