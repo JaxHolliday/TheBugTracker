@@ -18,7 +18,6 @@ namespace TheBugTracker.Controllers
     public class ProjectsController : Controller
     {
         #region Constructors
-        private readonly ApplicationDbContext _context;
         private readonly IBTRolesService _rolesService;
         private readonly IBTLookupService _lookupService;
         private readonly IBTFileService _fileService;
@@ -28,15 +27,13 @@ namespace TheBugTracker.Controllers
 
         #endregion
         #region Injection
-        public ProjectsController(ApplicationDbContext context,
-                          IBTRolesService rolesService,
-                          IBTLookupService lookupService,
-                          IBTFileService fileService,
-                          IBTProjectService projectService,
-                          UserManager<BTUser> userManager,
-                          IBTCompanyInfoService companyInfoService)
+        public ProjectsController(IBTRolesService rolesService,
+                                  IBTLookupService lookupService,
+                                  IBTFileService fileService,
+                                  IBTProjectService projectService,
+                                  UserManager<BTUser> userManager,
+                                  IBTCompanyInfoService companyInfoService)
         {
-            _context = context;
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
@@ -45,13 +42,6 @@ namespace TheBugTracker.Controllers
             _companyInfoService = companyInfoService;
         }
         #endregion
-
-        // GET: Projects
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
-            return View(await applicationDbContext.ToListAsync());
-        }
 
         public async Task<IActionResult> MyProjects()
         {
@@ -327,9 +317,18 @@ namespace TheBugTracker.Controllers
                     return RedirectToAction("Index");
 
                 }
-                catch (Exception)
+                catch (DbUpdateConcurrencyException)
                 {
-                    throw;
+                    //use await since bool method is async 
+                    if (!await ProjectExists(model.Project.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        //throws shows why this has occured 
+                        throw;
+                    }
                 }
             }
 
@@ -402,9 +401,12 @@ namespace TheBugTracker.Controllers
         }
 
 
-        private bool ProjectExists(int id)
+        private async Task<bool> ProjectExists(int id)
         {
-            return _context.Projects.Any(e => e.Id == id);
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            //returns bool checking for id of project
+            return (await _projectService.GetAllProjectsByCompanyAsync(companyId)).Any(p => p.Id == id);
         }
     }
 }

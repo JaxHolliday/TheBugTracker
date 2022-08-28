@@ -20,7 +20,6 @@ namespace TheBugTracker.Controllers
     public class TicketsController : Controller
     {
         //Injection
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTProjectService _projectService;
         private readonly IBTLookupService _lookupService;
@@ -29,15 +28,13 @@ namespace TheBugTracker.Controllers
         private readonly IBTTicketHistoryService _historyService;
 
         //Constructor
-        public TicketsController(ApplicationDbContext context,
-                                 UserManager<BTUser> userManager,
+        public TicketsController(UserManager<BTUser> userManager,
                                  IBTProjectService projectService,
                                  IBTLookupService lookupService,
                                  IBTTicketService ticketService,
                                  IBTFileService fileService,
                                  IBTTicketHistoryService historyService)
         {
-            _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _lookupService = lookupService;
@@ -46,12 +43,6 @@ namespace TheBugTracker.Controllers
             _historyService = historyService;
         }
 
-        // GET: Tickets
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(await applicationDbContext.ToListAsync());
-        }
 
         public async Task<IActionResult> MyTickets()
         {
@@ -312,6 +303,7 @@ namespace TheBugTracker.Controllers
                     }
                     else
                     {
+                        //throws shows why this has occured 
                         throw;
                     }
                 }
